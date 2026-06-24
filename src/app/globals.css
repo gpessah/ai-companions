@@ -1,26 +1,93 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0f;
+  --foreground: #f0f0f5;
+  --card: #13131a;
+  --card-foreground: #f0f0f5;
+  --border: #2a2a3a;
+  --input: #1a1a26;
+  --primary: #e91e8c;
+  --primary-hover: #c91570;
+  --secondary: #7c3aed;
+  --muted: #1e1e2e;
+  --muted-foreground: #8888aa;
+  --accent: #e91e8c;
+  --radius: 12px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+  border-color: var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
+
+/* Chat message bubble animation */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.message-in { animation: fadeSlideIn 0.2s ease-out; }
+
+/* Pink glow effect */
+.glow-pink {
+  box-shadow: 0 0 30px rgba(233, 30, 140, 0.3);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #e91e8c, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card hover lift */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(233, 30, 140, 0.2);
+}
+
+/* Gradient border */
+.gradient-border {
+  position: relative;
+  background: var(--card);
+  border-radius: var(--radius);
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--radius) + 1px);
+  background: linear-gradient(135deg, #e91e8c, #7c3aed);
+  z-index: -1;
 }

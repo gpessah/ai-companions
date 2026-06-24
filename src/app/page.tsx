@@ -1,65 +1,98 @@
-import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import { Navbar } from "@/components/layout/navbar";
+import { CharacterCard } from "@/components/characters/character-card";
+import { Sparkles, MessageCircle, Phone, Shield } from "lucide-react";
 
-export default function Home() {
+async function getCharacters() {
+  return prisma.character.findMany({
+    where: { isPublished: true },
+    orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }],
+    include: {
+      _count: { select: { favorites: true, conversations: true } },
+    },
+  });
+}
+
+export default async function HomePage() {
+  const characters = await getCharacters();
+  const featured = characters.filter((c) => c.isFeatured);
+  const rest = characters.filter((c) => !c.isFeatured);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen">
+      <Navbar />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden py-20 px-4">
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 0%, #e91e8c 0%, transparent 60%), radial-gradient(ellipse at 80% 50%, #7c3aed 0%, transparent 50%)",
+          }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+        <div className="relative max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[--primary]/30 bg-[--primary]/10 text-[--primary] text-sm font-medium mb-6">
+            <Sparkles className="w-4 h-4" />
+            AI-Powered Companions
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
+            Meet Your{" "}
+            <span className="gradient-text">Perfect Match</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-[--muted-foreground] text-lg md:text-xl max-w-2xl mx-auto mb-10">
+            Chat with beautiful AI companions who remember you, understand you, and are always there for you — day or night.
           </p>
+
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-[--muted-foreground]">
+            {[
+              { icon: MessageCircle, label: "Intelligent Chat" },
+              { icon: Phone, label: "AI Voice Calls" },
+              { icon: Shield, label: "Private & Secure" },
+            ].map(({ icon: Icon, label }) => (
+              <div key={label} className="flex items-center gap-2">
+                <Icon className="w-4 h-4 text-[--primary]" />
+                {label}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </section>
+
+      {/* Characters grid */}
+      <section className="max-w-7xl mx-auto px-4 pb-20">
+        {featured.length > 0 && (
+          <>
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-[--primary]" />
+              Featured Companions
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+              {featured.map((char) => (
+                <CharacterCard key={char.id} character={char} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {rest.length > 0 && (
+          <>
+            <h2 className="text-2xl font-bold mb-6">All Companions</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {rest.map((char) => (
+                <CharacterCard key={char.id} character={char} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {characters.length === 0 && (
+          <div className="text-center py-32 text-[--muted-foreground]">
+            <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-30" />
+            <p className="text-lg">No companions yet. Add some from the admin panel!</p>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
