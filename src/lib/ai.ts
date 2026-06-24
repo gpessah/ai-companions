@@ -1,12 +1,14 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
+import { createGroq } from "@ai-sdk/groq";
+
 const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const anthropic = createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const groq = createGroq({ apiKey: process.env.GROQ_API_KEY });
 
-export function getModel(provider: "OPENAI" | "ANTHROPIC", modelId: string) {
-  if (provider === "ANTHROPIC") {
-    return anthropic(modelId || "claude-sonnet-4-6");
-  }
+export function getModel(provider: "OPENAI" | "ANTHROPIC" | "GROQ", modelId: string) {
+  if (provider === "ANTHROPIC") return anthropic(modelId || "claude-sonnet-4-6");
+  if (provider === "GROQ") return groq(modelId || "llama-3.3-70b-versatile");
   return openai(modelId || "gpt-4o");
 }
 
