@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Navbar } from "@/components/layout/navbar";
+
+export const dynamic = "force-dynamic";
 import { CharacterCard } from "@/components/characters/character-card";
 import { Sparkles, MessageCircle, Phone, Shield } from "lucide-react";
 

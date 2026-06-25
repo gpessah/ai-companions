@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 import { Navbar } from "@/components/layout/navbar";
 import { CharacterCard } from "@/components/characters/character-card";
 import { Heart } from "lucide-react";

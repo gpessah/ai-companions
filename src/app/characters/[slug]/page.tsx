@@ -3,6 +3,8 @@ import { Navbar } from "@/components/layout/navbar";
 import { CharacterProfile } from "@/components/characters/character-profile";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const char = await prisma.character.findUnique({ where: { slug, isPublished: true } });

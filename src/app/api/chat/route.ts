@@ -5,6 +5,8 @@ import { getOrCreateUser } from "@/lib/auth";
 import { getModel, buildSystemPrompt } from "@/lib/ai";
 import { NextRequest } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return new Response("Unauthorized", { status: 401 });

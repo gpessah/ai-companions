@@ -3,6 +3,8 @@ import { requireAdmin } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 
+export const dynamic = "force-dynamic";
+
 // Install nanoid: npm install nanoid
 export async function POST(req: NextRequest) {
   // Admin-only: check secret header

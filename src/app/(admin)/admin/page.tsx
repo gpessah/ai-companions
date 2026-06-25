@@ -2,6 +2,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Users, MessageCircle, Image, Phone } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
   const [charCount, userCount, msgCount, callCount] = await Promise.all([
     prisma.character.count(),

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { CharacterForm } from "@/components/admin/character-form";
 import { MediaManager } from "@/components/admin/media-manager";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditCharacterPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 

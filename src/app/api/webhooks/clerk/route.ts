@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const headerPayload = await headers();

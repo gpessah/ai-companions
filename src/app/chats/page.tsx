@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 import { Navbar } from "@/components/layout/navbar";
 import Image from "next/image";
 import Link from "next/link";

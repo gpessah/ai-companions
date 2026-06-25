@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+
+export const dynamic = "force-dynamic";
 import { getOrCreateUser } from "@/lib/auth";
 import { ChatInterface } from "@/components/chat/chat-interface";
 import { notFound, redirect } from "next/navigation";

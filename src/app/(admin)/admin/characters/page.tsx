@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 import Image from "next/image";
 import { Plus, Edit, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";

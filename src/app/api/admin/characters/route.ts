@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 function checkAdmin(req: NextRequest) {
   const secret = req.headers.get("x-admin-secret");
   return secret === process.env.ADMIN_SECRET;
