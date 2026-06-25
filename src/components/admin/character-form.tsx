@@ -12,7 +12,7 @@ interface CharacterData {
   description?: string;
   personality?: string;
   age?: number | null;
-  interests?: string[];
+  interests?: unknown;
   avatarUrl?: string;
   coverUrl?: string | null;
   voiceId?: string | null;
@@ -41,7 +41,7 @@ export function CharacterForm({ character }: CharacterFormProps) {
       character?.personality ??
       "You are a warm, playful, and engaging AI companion. You love deep conversations, have a great sense of humor, and genuinely care about the person you're talking to.",
     age: character?.age?.toString() ?? "",
-    interests: character?.interests?.join(", ") ?? "",
+    interests: Array.isArray(character?.interests) ? (character.interests as string[]).join(", ") : "",
     avatarUrl: character?.avatarUrl ?? "",
     coverUrl: character?.coverUrl ?? "",
     voiceId: character?.voiceId ?? "",
