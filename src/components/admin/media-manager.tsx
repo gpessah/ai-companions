@@ -33,24 +33,16 @@ export function MediaManager({ characterId, initialMedia }: MediaManagerProps) {
     for (const file of Array.from(files)) {
       const isVideo = file.type.startsWith("video/");
       try {
-        // Get presigned upload URL
+        // Upload the file to local storage
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("folder", "media");
         const res = await fetch("/api/upload", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-admin-secret": secret },
-          body: JSON.stringify({
-            filename: file.name,
-            contentType: file.type,
-            folder: "media",
-          }),
+          headers: { "x-admin-secret": secret },
+          body: fd,
         });
-        const { uploadUrl, publicUrl } = await res.json();
-
-        // Upload to R2
-        await fetch(uploadUrl, {
-          method: "PUT",
-          body: file,
-          headers: { "Content-Type": file.type },
-        });
+        const { publicUrl } = await res.json();
 
         // Save to DB
         const mediaRes = await fetch("/api/admin/media", {

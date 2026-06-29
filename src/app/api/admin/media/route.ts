@@ -35,7 +35,7 @@ export async function DELETE(req: NextRequest) {
   const media = await prisma.media.findUnique({ where: { id } });
   if (!media) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Delete from R2
+  // Delete the underlying file(s) from local storage
   try {
     await deleteFile(keyFromUrl(media.url));
     if (media.thumbnailUrl) await deleteFile(keyFromUrl(media.thumbnailUrl));

@@ -1,42 +1,29 @@
-import {
-  S3Client,
-  PutObjectCommand,
-  DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { promises as fs } from "fs";
+import path from "path";
 
-const r2 = new S3Client({
-  region: "auto",
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-  },
-});
+// Local filesystem storage. Files are written into <appRoot>/uploads/<key>
+// and served statically by the web server at /uploads/<key>.
+const UPLOAD_DIR = path.join(process.cwd(), "uploads");
 
-export async function getUploadUrl(key: string, contentType: string) {
-  const command = new PutObjectCommand({
-    Bucket: process.env.R2_BUCKET_NAME!,
-    Key: key,
-    ContentType: contentType,
-  });
-  const url = await getSignedUrl(r2, command, { expiresIn: 3600 });
-  return { url, key };
+export async function saveFile(key: string, data: Buffer) {
+  const dest = path.join(UPLOAD_DIR, key);
+  await fs.mkdir(path.dirname(dest), { recursive: true });
+  await fs.writeFile(dest, data);
+  return { key };
 }
 
 export async function deleteFile(key: string) {
-  await r2.send(
-    new DeleteObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME!,
-      Key: key,
-    })
-  );
+  try {
+    await fs.unlink(path.join(UPLOAD_DIR, key));
+  } catch {
+    // ignore missing files
+  }
 }
 
 export function getPublicUrl(key: string) {
-  return `${process.env.R2_PUBLIC_URL}/${key}`;
+  return `/uploads/${key}`;
 }
 
 export function keyFromUrl(url: string) {
-  return url.replace(`${process.env.R2_PUBLIC_URL}/`, "");
+  return url.replace(/^\/uploads\//, "");
 }

@@ -1,11 +1,9 @@
-import { getUploadUrl } from "@/lib/storage";
-import { requireAdmin } from "@/lib/auth";
+import { saveFile, getPublicUrl } from "@/lib/storage";
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 
 export const dynamic = "force-dynamic";
 
-// Install nanoid: npm install nanoid
 export async function POST(req: NextRequest) {
   // Admin-only: check secret header
   const secret = req.headers.get("x-admin-secret");
@@ -13,12 +11,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { filename, contentType, folder } = await req.json();
-  const ext = filename.split(".").pop();
-  const key = `${folder ?? "media"}/${nanoid()}.${ext}`;
+  const formData = await req.formData();
+  const file = formData.get("file") as File | null;
+  const folder = (formData.get("folder") as string) || "media";
 
-  const { url } = await getUploadUrl(key, contentType);
-  const publicUrl = `${process.env.R2_PUBLIC_URL}/${key}`;
+  if (!file) {
+    return NextResponse.json({ error: "No file provided" }, { status: 400 });
+  }
 
-  return NextResponse.json({ uploadUrl: url, publicUrl, key });
+  const ext = file.name.split(".").pop() || "bin";
+  const key = `${folder}/${nanoid()}.${ext}`;
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await saveFile(key, buffer);
+
+  const publicUrl = getPublicUrl(key);
+  return NextResponse.json({ publicUrl, key });
 }

@@ -62,17 +62,15 @@ export function CharacterForm({ character }: CharacterFormProps) {
   ) => {
     setUploading(true);
     try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("folder", "avatars");
       const res = await fetch("/api/upload", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-secret": getAdminSecret() },
-        body: JSON.stringify({
-          filename: file.name,
-          contentType: file.type,
-          folder: "avatars",
-        }),
+        headers: { "x-admin-secret": getAdminSecret() },
+        body: fd,
       });
-      const { uploadUrl, publicUrl } = await res.json();
-      await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      const { publicUrl } = await res.json();
       setForm((f) => ({ ...f, [field]: publicUrl }));
     } finally {
       setUploading(false);
