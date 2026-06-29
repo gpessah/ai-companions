@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { Trash2, Lock, Unlock, Upload, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ export function MediaManager({ characterId, initialMedia }: MediaManagerProps) {
   const [media, setMedia] = useState<MediaItem[]>(initialMedia);
   const [uploading, setUploading] = useState(false);
   const [tab, setTab] = useState<"IMAGE" | "VIDEO">("IMAGE");
+  const topInputRef = useRef<HTMLInputElement>(null);
 
   const uploadFiles = async (files: FileList) => {
     setUploading(true);
@@ -119,19 +120,25 @@ export function MediaManager({ characterId, initialMedia }: MediaManagerProps) {
           ))}
         </div>
 
-        <label className="cursor-pointer">
-          <Button variant="outline" loading={uploading} type="button">
+        <div>
+          <Button
+            variant="outline"
+            loading={uploading}
+            type="button"
+            onClick={() => topInputRef.current?.click()}
+          >
             <Upload className="w-4 h-4" />
             {uploading ? "Uploading..." : `Upload ${tab === "IMAGE" ? "Photos" : "Videos"}`}
           </Button>
           <input
+            ref={topInputRef}
             type="file"
             multiple
             accept={tab === "IMAGE" ? "image/*" : "video/*"}
             className="hidden"
             onChange={(e) => e.target.files && uploadFiles(e.target.files)}
           />
-        </label>
+        </div>
       </div>
 
       {/* Media grid */}

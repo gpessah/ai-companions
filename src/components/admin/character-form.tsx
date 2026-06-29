@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Input, Textarea } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,8 @@ export function CharacterForm({ character }: CharacterFormProps) {
   const [loading, setLoading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     name: character?.name ?? "",
@@ -168,20 +170,25 @@ export function CharacterForm({ character }: CharacterFormProps) {
             placeholder="https://... or upload below"
             className="flex-1"
           />
-          <label className="cursor-pointer">
-            <Button variant="outline" size="sm" type="button" loading={uploadingAvatar}>
-              Upload
-            </Button>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) uploadFile(file, "avatarUrl", setUploadingAvatar);
-              }}
-            />
-          </label>
+          <Button
+            variant="outline"
+            size="sm"
+            type="button"
+            loading={uploadingAvatar}
+            onClick={() => avatarInputRef.current?.click()}
+          >
+            Upload
+          </Button>
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) uploadFile(file, "avatarUrl", setUploadingAvatar);
+            }}
+          />
         </div>
       </div>
 
@@ -198,20 +205,25 @@ export function CharacterForm({ character }: CharacterFormProps) {
             placeholder="https://..."
             className="flex-1"
           />
-          <label className="cursor-pointer">
-            <Button variant="outline" size="sm" type="button" loading={uploadingCover}>
-              Upload
-            </Button>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) uploadFile(file, "coverUrl", setUploadingCover);
-              }}
-            />
-          </label>
+          <Button
+            variant="outline"
+            size="sm"
+            type="button"
+            loading={uploadingCover}
+            onClick={() => coverInputRef.current?.click()}
+          >
+            Upload
+          </Button>
+          <input
+            ref={coverInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) uploadFile(file, "coverUrl", setUploadingCover);
+            }}
+          />
         </div>
       </div>
 
