@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Input, Textarea } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getAdminSecret } from "@/lib/admin-client";
+import { AI_PROVIDERS, providerDefaultModel } from "@/lib/ai-providers";
 
 interface CharacterData {
   id?: string;
@@ -47,8 +48,8 @@ export function CharacterForm({ character }: CharacterFormProps) {
     avatarUrl: character?.avatarUrl ?? "",
     coverUrl: character?.coverUrl ?? "",
     voiceId: character?.voiceId ?? "",
-    aiProvider: character?.aiProvider ?? "OPENAI",
-    aiModel: character?.aiModel ?? "gpt-4o",
+    aiProvider: character?.aiProvider ?? "GROQ",
+    aiModel: character?.aiModel ?? "llama-3.3-70b-versatile",
     isPublished: character?.isPublished ?? false,
     isFeatured: character?.isFeatured ?? false,
     sortOrder: character?.sortOrder?.toString() ?? "0",
@@ -143,15 +144,16 @@ export function CharacterForm({ character }: CharacterFormProps) {
             onChange={set("aiProvider")}
             className="rounded-xl border border-[--border] bg-[--input] px-4 py-2.5 text-sm text-[--foreground] focus:outline-none focus:ring-2 focus:ring-[--primary]"
           >
-            <option value="OPENAI">OpenAI</option>
-            <option value="ANTHROPIC">Anthropic (Claude)</option>
+            {AI_PROVIDERS.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
           </select>
         </div>
         <Input
           label="Model ID"
           value={form.aiModel}
           onChange={set("aiModel")}
-          placeholder={form.aiProvider === "OPENAI" ? "gpt-4o" : "claude-sonnet-4-6"}
+          placeholder={providerDefaultModel(form.aiProvider)}
         />
       </div>
 

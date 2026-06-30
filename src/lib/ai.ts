@@ -1,15 +1,21 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { createGroq } from "@ai-sdk/groq";
+import { PROVIDER_BASE_URLS, providerDefaultModel } from "./ai-providers";
 
-const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const anthropic = createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-const groq = createGroq({ apiKey: process.env.GROQ_API_KEY });
+// Returns a LanguageModel for the given provider, using the provided API key.
+// All OpenAI-compatible providers go through the OpenAI client with a custom
+// base URL; Anthropic uses its own SDK.
+export function getModel(provider: string, modelId: string, apiKey: string) {
+  const model = modelId || providerDefaultModel(provider);
 
-export function getModel(provider: "OPENAI" | "ANTHROPIC" | "GROQ", modelId: string) {
-  if (provider === "ANTHROPIC") return anthropic(modelId || "claude-sonnet-4-6");
-  if (provider === "GROQ") return groq(modelId || "llama-3.3-70b-versatile");
-  return openai(modelId || "gpt-4o");
+  if (provider === "ANTHROPIC") {
+    return createAnthropic({ apiKey })(model);
+  }
+
+  const baseURL = PROVIDER_BASE_URLS[provider] ?? PROVIDER_BASE_URLS.OPENAI;
+  // .chat() forces the chat-completions endpoint, which every OpenAI-compatible
+  // provider supports (the default callable uses the Responses API).
+  return createOpenAI({ apiKey, baseURL }).chat(model);
 }
 
 export function buildSystemPrompt(character: {

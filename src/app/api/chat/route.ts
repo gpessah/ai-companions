@@ -2,7 +2,8 @@ import { streamText } from "ai";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/auth";
-import { getModel, buildSystemPrompt } from "@/lib/ai";
+import { buildSystemPrompt } from "@/lib/ai";
+import { resolveModelForCharacter } from "@/lib/resolve-model";
 import { NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -37,7 +38,12 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const model = getModel(character.aiProvider as "OPENAI" | "ANTHROPIC", character.aiModel);
+  let model;
+  try {
+    model = await resolveModelForCharacter(character);
+  } catch (e) {
+    return new Response((e as Error).message, { status: 400 });
+  }
 
   const result = streamText({
     model,

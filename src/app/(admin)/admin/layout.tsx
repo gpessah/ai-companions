@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, LayoutDashboard, Users, LogOut } from "lucide-react";
+import { Sparkles, LayoutDashboard, Users, LogOut, Bot } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,6 +16,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="flex-1 p-4 space-y-1">
           <SideLink href="/admin" icon={LayoutDashboard}>Dashboard</SideLink>
           <SideLink href="/admin/characters" icon={Users}>Characters</SideLink>
+          <SideLink href="/admin/ai" icon={Bot}>AI Providers</SideLink>
         </nav>
 
         <div className="p-4 border-t border-[--border]">

@@ -41,8 +41,8 @@ model Character {
   avatarUrl       String     @db.Text
   coverUrl        String?    @db.Text
   voiceId         String?
-  aiProvider      AIProvider @default(OPENAI)
-  aiModel         String     @default("gpt-4o")
+  aiProvider      String     @default("GROQ")
+  aiModel         String     @default("llama-3.3-70b-versatile")
   isPublished     Boolean    @default(false)
   isFeatured      Boolean    @default(false)
   sortOrder       Int        @default(0)
@@ -54,10 +54,14 @@ model Character {
   favorites       Favorite[]
 }
 
-enum AIProvider {
-  OPENAI
-  ANTHROPIC
-  GROQ
+model ProviderKey {
+  id        String   @id @default(cuid())
+  provider  String   @unique
+  apiKey    String   @db.Text
+  model     String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Media {
